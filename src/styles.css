@@ -1,0 +1,161 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surplus: var(--surplus);
+  --color-deficit: var(--deficit);
+  --color-data: var(--data);
+  --color-data-glow: var(--data-glow);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 3px;
+  /* Warm cream "civic" light palette inspired by euhack.vercel.app */
+  --background: oklch(0.965 0.012 80);
+  --surface: oklch(0.985 0.008 80);
+  --surface-2: oklch(0.945 0.014 80);
+  --foreground: oklch(0.24 0.012 65);
+  --card: oklch(0.985 0.008 80);
+  --card-foreground: oklch(0.24 0.012 65);
+  --popover: oklch(0.985 0.008 80);
+  --popover-foreground: oklch(0.24 0.012 65);
+  --primary: oklch(0.55 0.06 145);            /* sage */
+  --primary-foreground: oklch(0.985 0.008 80);
+  --secondary: oklch(0.92 0.013 80);
+  --secondary-foreground: oklch(0.24 0.012 65);
+  --muted: oklch(0.92 0.013 80);
+  --muted-foreground: oklch(0.48 0.014 70);
+  --accent: oklch(0.9 0.025 135);              /* pale sage */
+  --accent-foreground: oklch(0.24 0.012 65);
+  --destructive: oklch(0.6 0.18 28);
+  --destructive-foreground: oklch(0.985 0.008 80);
+  --border: oklch(0.88 0.013 80);
+  --border-strong: oklch(0.78 0.015 80);
+  --input: oklch(0.9 0.013 80);
+  --ring: oklch(0.6 0.07 145);
+  /* Signals */
+  --surplus: oklch(0.6 0.13 145);              /* sage green */
+  --deficit: oklch(0.62 0.17 28);              /* terracotta */
+  --data:    oklch(0.5 0.11 235);              /* civic blue */
+  --data-glow: oklch(0.55 0.13 235 / 0.4);
+}
+
+.dark { color-scheme: light; }
+
+html, body, #root { height: 100%; }
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Mapbox light tweaks */
+.force-map-canvas.mapboxgl-map {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.force-map-canvas .mapboxgl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-logo { opacity: 0.45; }
+.mapboxgl-popup-content {
+  background: var(--color-surface) !important;
+  color: var(--color-foreground) !important;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px !important;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 10px !important;
+  box-shadow: 0 6px 20px rgba(60,50,30,0.12);
+}
+.mapboxgl-popup-tip { display: none !important; }
+
+.scanlines::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(60,50,30,0.022) 3px,
+    rgba(60,50,30,0.022) 4px
+  );
+  pointer-events: none;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+.live-dot { animation: pulse-dot 1.8s ease-in-out infinite; }
+
+/* Force badges layered above Mapbox Standard basemap */
+.force-badge { transform: translate(-50%, -100%); }
+.force-badge .badge-shell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 7px 5px;
+  background: rgba(255, 253, 247, 0.96);
+  border: 1px solid rgba(60, 50, 30, 0.22);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(40, 30, 10, 0.12);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--color-foreground);
+  white-space: nowrap;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+.force-badge .badge-shell:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40, 30, 10, 0.18); }
+.force-badge .badge-shell.is-selected {
+  border-color: var(--color-data);
+  box-shadow: 0 0 0 2px var(--color-data-glow), 0 6px 16px rgba(40, 30, 10, 0.18);
+}
+.force-badge .badge-main { display: inline-flex; align-items: center; gap: 4px; }
+.force-badge .badge-emoji { font-size: 13px; line-height: 1; }
+.force-badge .badge-count { font-weight: 600; letter-spacing: 0.02em; }
+.force-badge .badge-deltas { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; }
+.force-badge .delta.out { color: var(--color-deficit); }
+.force-badge .delta.in { color: var(--color-surplus); }

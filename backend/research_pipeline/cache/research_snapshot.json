@@ -1,0 +1,1965 @@
+{
+  "audits": {
+    "randomForestAuditTextAvailable": true,
+    "reallocation": {
+      "averageTransferDistanceMiles": 78.35,
+      "minimizedOfficerMiles": 1666442.13,
+      "nationalPoolFTE": 130241.0,
+      "redistributionRatePct": 16.33,
+      "solverStatus": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "totalOfficersReallocated": 21270.0
+    },
+    "vifAuditTextAvailable": true
+  },
+  "computationTruth": {
+    "cacheBuiltFromExistingOutputs": true,
+    "fullRawRecomputeExecutedForThisCache": false,
+    "fullRawRecomputeImplemented": true,
+    "knownResearchInconsistency": "reallocation audit text says Random Forest predicted CHI feeds allocation, but legacy run_reallocation.py computes allocation from observed total_chi. Full mode preserves explicit fields so this can be audited."
+  },
+  "crimeSeverityMedians": {
+    "Anti-social behavior": 10.0,
+    "Anti-social behaviour": 10.0,
+    "Bicycle theft": 2.0,
+    "Burglary": 126.0,
+    "Criminal damage and arson": 2.0,
+    "Drugs": 5.0,
+    "Other crime": 10.0,
+    "Other theft": 2.0,
+    "Possession of weapons": 365.0,
+    "Public order": 5.0,
+    "Robbery": 365.0,
+    "Shoplifting": 1.0,
+    "Theft from the person": 2.0,
+    "Vehicle crime": 5.0,
+    "Violence and sexual offences": 182.5
+  },
+  "forces": [
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3327,
+      "code": "AVS",
+      "coreGrant2025_26": 231600000.0,
+      "crimeByCategory": {},
+      "id": "AVS",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Avon & Somerset",
+      "netShift": 2970,
+      "populationDensity": null,
+      "proposedFTE": 6297,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1481,
+      "code": "BED",
+      "coreGrant2025_26": 89800000.0,
+      "crimeByCategory": {},
+      "id": "BED",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Bedfordshire",
+      "netShift": -508,
+      "populationDensity": null,
+      "proposedFTE": 973,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1720,
+      "code": "CAM",
+      "coreGrant2025_26": 104200000.0,
+      "crimeByCategory": {},
+      "id": "CAM",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Cambridgeshire",
+      "netShift": 648,
+      "populationDensity": null,
+      "proposedFTE": 2368,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2395,
+      "code": "CHE",
+      "coreGrant2025_26": 150700000.0,
+      "crimeByCategory": {},
+      "id": "CHE",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Cheshire",
+      "netShift": -407,
+      "populationDensity": null,
+      "proposedFTE": 1988,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1520,
+      "code": "CLE",
+      "coreGrant2025_26": 121100000.0,
+      "crimeByCategory": {},
+      "id": "CLE",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Cleveland",
+      "netShift": 10,
+      "populationDensity": null,
+      "proposedFTE": 1530,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1365,
+      "code": "CUM",
+      "coreGrant2025_26": 84900000.0,
+      "crimeByCategory": {},
+      "id": "CUM",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Cumbria",
+      "netShift": -246,
+      "populationDensity": null,
+      "proposedFTE": 1119,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2102,
+      "code": "DER",
+      "coreGrant2025_26": 142400000.0,
+      "crimeByCategory": {},
+      "id": "DER",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Derbyshire",
+      "netShift": 1130,
+      "populationDensity": null,
+      "proposedFTE": 3232,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3618,
+      "code": "DEC",
+      "coreGrant2025_26": 238100000.0,
+      "crimeByCategory": {},
+      "id": "DEC",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Devon & Cornwall",
+      "netShift": 1053,
+      "populationDensity": null,
+      "proposedFTE": 4671,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1420,
+      "code": "DOR",
+      "coreGrant2025_26": 86000000.0,
+      "crimeByCategory": {},
+      "id": "DOR",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Dorset",
+      "netShift": -384,
+      "populationDensity": null,
+      "proposedFTE": 1036,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1376,
+      "code": "DUR",
+      "coreGrant2025_26": 112900000.0,
+      "crimeByCategory": {},
+      "id": "DUR",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Durham",
+      "netShift": 810,
+      "populationDensity": null,
+      "proposedFTE": 2186,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3760,
+      "code": "ESX",
+      "coreGrant2025_26": 226500000.0,
+      "crimeByCategory": {},
+      "id": "ESX",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Essex",
+      "netShift": -206,
+      "populationDensity": null,
+      "proposedFTE": 3554,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1346,
+      "code": "GLO",
+      "coreGrant2025_26": 78000000.0,
+      "crimeByCategory": {},
+      "id": "GLO",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Gloucestershire",
+      "netShift": 445,
+      "populationDensity": null,
+      "proposedFTE": 1791,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 8112,
+      "code": "GMP",
+      "coreGrant2025_26": 574000000.0,
+      "crimeByCategory": {},
+      "id": "GMP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Greater Manchester",
+      "netShift": 0,
+      "populationDensity": null,
+      "proposedFTE": 8112,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "balanced",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3370,
+      "code": "HAM",
+      "coreGrant2025_26": 258900000.0,
+      "crimeByCategory": {},
+      "id": "HAM",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Hampshire & Isle of Wight",
+      "netShift": 533,
+      "populationDensity": null,
+      "proposedFTE": 3903,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2379,
+      "code": "HER",
+      "coreGrant2025_26": 155200000.0,
+      "crimeByCategory": {},
+      "id": "HER",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Hertfordshire",
+      "netShift": -138,
+      "populationDensity": null,
+      "proposedFTE": 2241,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2273,
+      "code": "HUM",
+      "coreGrant2025_26": 162800000.0,
+      "crimeByCategory": {},
+      "id": "HUM",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Humberside",
+      "netShift": -422,
+      "populationDensity": null,
+      "proposedFTE": 1851,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 4168,
+      "code": "KEN",
+      "coreGrant2025_26": 245400000.0,
+      "crimeByCategory": {},
+      "id": "KEN",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Kent",
+      "netShift": 1201,
+      "populationDensity": null,
+      "proposedFTE": 5369,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3561,
+      "code": "LAN",
+      "coreGrant2025_26": 253200000.0,
+      "crimeByCategory": {},
+      "id": "LAN",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Lancashire",
+      "netShift": -561,
+      "populationDensity": null,
+      "proposedFTE": 3000,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2248,
+      "code": "LEI",
+      "coreGrant2025_26": 149400000.0,
+      "crimeByCategory": {},
+      "id": "LEI",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Leicestershire",
+      "netShift": 457,
+      "populationDensity": null,
+      "proposedFTE": 2705,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1173,
+      "code": "LIN",
+      "coreGrant2025_26": 85500000.0,
+      "crimeByCategory": {},
+      "id": "LIN",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Lincolnshire",
+      "netShift": -470,
+      "populationDensity": null,
+      "proposedFTE": 703,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 34285,
+      "code": "MPS-CoL",
+      "coreGrant2025_26": 2362500000.0,
+      "crimeByCategory": {},
+      "id": "MPS-CoL",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "London forces: Metropolitan Police + City of London Police",
+      "netShift": -12398,
+      "populationDensity": null,
+      "proposedFTE": 21887,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 4159,
+      "code": "MER",
+      "coreGrant2025_26": 331600000.0,
+      "crimeByCategory": {},
+      "id": "MER",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Merseyside",
+      "netShift": -1980,
+      "populationDensity": null,
+      "proposedFTE": 2179,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1911,
+      "code": "NOR",
+      "coreGrant2025_26": 115500000.0,
+      "crimeByCategory": {},
+      "id": "NOR",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Norfolk",
+      "netShift": 120,
+      "populationDensity": null,
+      "proposedFTE": 2031,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1655,
+      "code": "NYP",
+      "coreGrant2025_26": 100000000.0,
+      "crimeByCategory": {},
+      "id": "NYP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "North Yorkshire",
+      "netShift": -616,
+      "populationDensity": null,
+      "proposedFTE": 1039,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1465,
+      "code": "NHA",
+      "coreGrant2025_26": 96700000.0,
+      "crimeByCategory": {},
+      "id": "NHA",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Northamptonshire",
+      "netShift": -221,
+      "populationDensity": null,
+      "proposedFTE": 1244,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3829,
+      "code": "NUM",
+      "coreGrant2025_26": 300600000.0,
+      "crimeByCategory": {},
+      "id": "NUM",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Northumbria",
+      "netShift": 159,
+      "populationDensity": null,
+      "proposedFTE": 3988,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2391,
+      "code": "NOT",
+      "coreGrant2025_26": 178900000.0,
+      "crimeByCategory": {},
+      "id": "NOT",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Nottinghamshire",
+      "netShift": 1136,
+      "populationDensity": null,
+      "proposedFTE": 3527,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3026,
+      "code": "SYP",
+      "coreGrant2025_26": 250100000.0,
+      "crimeByCategory": {},
+      "id": "SYP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "South Yorkshire",
+      "netShift": 513,
+      "populationDensity": null,
+      "proposedFTE": 3539,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1997,
+      "code": "STA",
+      "coreGrant2025_26": 154700000.0,
+      "crimeByCategory": {},
+      "id": "STA",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Staffordshire",
+      "netShift": 888,
+      "populationDensity": null,
+      "proposedFTE": 2885,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1403,
+      "code": "SUF",
+      "coreGrant2025_26": 92300000.0,
+      "crimeByCategory": {},
+      "id": "SUF",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Suffolk",
+      "netShift": 447,
+      "populationDensity": null,
+      "proposedFTE": 1850,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2330,
+      "code": "SUR",
+      "coreGrant2025_26": 132100000.0,
+      "crimeByCategory": {},
+      "id": "SUR",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Surrey",
+      "netShift": -625,
+      "populationDensity": null,
+      "proposedFTE": 1705,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 3206,
+      "code": "SUS",
+      "coreGrant2025_26": 216800000.0,
+      "crimeByCategory": {},
+      "id": "SUS",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Sussex",
+      "netShift": 1801,
+      "populationDensity": null,
+      "proposedFTE": 5007,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 5000,
+      "code": "TVP",
+      "coreGrant2025_26": 304000000.0,
+      "crimeByCategory": {},
+      "id": "TVP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Thames Valley",
+      "netShift": -2088,
+      "populationDensity": null,
+      "proposedFTE": 2912,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "surplus",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1131,
+      "code": "WAR",
+      "coreGrant2025_26": 70300000.0,
+      "crimeByCategory": {},
+      "id": "WAR",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Warwickshire",
+      "netShift": 379,
+      "populationDensity": null,
+      "proposedFTE": 1510,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 2509,
+      "code": "WMC",
+      "coreGrant2025_26": 159100000.0,
+      "crimeByCategory": {},
+      "id": "WMC",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "West Mercia",
+      "netShift": 1415,
+      "populationDensity": null,
+      "proposedFTE": 3924,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 7991,
+      "code": "WMP",
+      "coreGrant2025_26": 598100000.0,
+      "crimeByCategory": {},
+      "id": "WMP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "West Midlands",
+      "netShift": 1462,
+      "populationDensity": null,
+      "proposedFTE": 9453,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 6138,
+      "code": "WYP",
+      "coreGrant2025_26": 420800000.0,
+      "crimeByCategory": {},
+      "id": "WYP",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "West Yorkshire",
+      "netShift": 3344,
+      "populationDensity": null,
+      "proposedFTE": 9482,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    },
+    {
+      "areaSqMi": null,
+      "baselineFTE": 1213,
+      "code": "WIL",
+      "coreGrant2025_26": 82900000.0,
+      "crimeByCategory": {},
+      "id": "WIL",
+      "imd": {
+        "education": null,
+        "health": null,
+        "housing": null,
+        "income": null,
+        "services": null
+      },
+      "missingComputedFields": [
+        "totalChi",
+        "predictedChi",
+        "spatialLagChi",
+        "hitRate",
+        "deprivationScores",
+        "crimeCategoryCounts",
+        "topLsoas",
+        "forceCentroid"
+      ],
+      "name": "Wiltshire",
+      "netShift": 349,
+      "populationDensity": null,
+      "proposedFTE": 1562,
+      "research": {
+        "hitRate": null,
+        "latitude": null,
+        "longitude": null,
+        "predictedChi": null,
+        "searchCount": null,
+        "sourceCompleteness": "partial_from_existing_reports",
+        "spatialLagChi": null,
+        "successCount": null,
+        "totalChi": null
+      },
+      "safetyIndex": null,
+      "status": "deficit",
+      "topLsoas": []
+    }
+  ],
+  "generatedAt": "2026-06-07T09:43:48.215613+00:00",
+  "missingData": [
+    {
+      "id": "lloyd_internal_lsoa_allocation",
+      "reason": "No research file contains LSOA-level officer placement targets, station capacity constraints, response-time objective, or Lloyd/k-means allocation output.",
+      "status": "not_implemented"
+    },
+    {
+      "id": "cached_per_force_model_inputs",
+      "reason": "Existing report folder contains transfer CSV and markdown audits, not serialized per-force CHI, IMD, hit-rate, centroid, or predicted-CHI rows.",
+      "status": "requires_full_recompute"
+    },
+    {
+      "id": "wales_scotland_scope",
+      "reason": "Legacy force-name mapper covers English forces only; Welsh forces and Police Scotland advisory are not valid computed outputs.",
+      "status": "not_in_current_computation"
+    }
+  ],
+  "mode": "from-existing",
+  "schemaVersion": 1,
+  "scope": {
+    "computedForces": 38,
+    "forceScope": "England territorial forces from Police force in England.xlsx; London merges Metropolitan Police + City of London Police.",
+    "unsupportedForces": [
+      "South Wales",
+      "Gwent",
+      "North Wales",
+      "Dyfed-Powys",
+      "Police Scotland (advisory)"
+    ]
+  },
+  "sourceFiles": {
+    "crimeSeverityDocx": "Crime severity scores.docx",
+    "legacyScriptsDirectory": "legacy_scripts/",
+    "optimizedTransfersCsv": "report/optimized_officer_transfers.csv",
+    "policeBaselineXlsx": "Police force in England.xlsx",
+    "rawParquetDirectory": "data/"
+  },
+  "transfers": [
+    {
+      "destination": "West Mercia",
+      "haversineMiles": 108.09289756479323,
+      "headcount": 1415,
+      "officerMiles": 152951.45005418244,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Avon & Somerset",
+      "haversineMiles": 106.75683961526525,
+      "headcount": 1327,
+      "officerMiles": 141666.326169457,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "West Midlands",
+      "haversineMiles": 94.0470437222885,
+      "headcount": 1462,
+      "officerMiles": 137496.7779219858,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Avon & Somerset",
+      "haversineMiles": 77.23020767115811,
+      "headcount": 1643,
+      "officerMiles": 126889.23120371278,
+      "origin": "Thames Valley"
+    },
+    {
+      "destination": "Devon & Cornwall",
+      "haversineMiles": 183.88844978537477,
+      "headcount": 669,
+      "officerMiles": 123021.37290641572,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "West Yorkshire",
+      "haversineMiles": 56.9891242247953,
+      "headcount": 1980,
+      "officerMiles": 112838.46596509469,
+      "origin": "Merseyside"
+    },
+    {
+      "destination": "Derbyshire",
+      "haversineMiles": 120.21285268364366,
+      "headcount": 909,
+      "officerMiles": 109273.48308943209,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Staffordshire",
+      "haversineMiles": 116.18158626011197,
+      "headcount": 888,
+      "officerMiles": 103169.24859897944,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Sussex",
+      "haversineMiles": 48.97043043090501,
+      "headcount": 1709,
+      "officerMiles": 83690.46560641666,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Nottinghamshire",
+      "haversineMiles": 107.72593123253984,
+      "headcount": 624,
+      "officerMiles": 67220.98108910485,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Kent",
+      "haversineMiles": 45.09103044145338,
+      "headcount": 1201,
+      "officerMiles": 54154.327560185506,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Nottinghamshire",
+      "haversineMiles": 75.76954930348975,
+      "headcount": 508,
+      "officerMiles": 38490.931046172795,
+      "origin": "Bedfordshire"
+    },
+    {
+      "destination": "Leicestershire",
+      "haversineMiles": 83.16534831760589,
+      "headcount": 457,
+      "officerMiles": 38006.56418114589,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Cambridgeshire",
+      "haversineMiles": 55.04104545815144,
+      "headcount": 648,
+      "officerMiles": 35666.59745688213,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Devon & Cornwall",
+      "haversineMiles": 90.83227371467129,
+      "headcount": 384,
+      "officerMiles": 34879.59310643378,
+      "origin": "Dorset"
+    },
+    {
+      "destination": "Warwickshire",
+      "haversineMiles": 79.9849506232283,
+      "headcount": 379,
+      "officerMiles": 30314.296286203527,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Durham",
+      "haversineMiles": 43.5624472894916,
+      "headcount": 616,
+      "officerMiles": 26834.467530326827,
+      "origin": "North Yorkshire"
+    },
+    {
+      "destination": "Wiltshire",
+      "haversineMiles": 74.59359702651001,
+      "headcount": 349,
+      "officerMiles": 26033.165362251995,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Gloucestershire",
+      "haversineMiles": 54.36133917877341,
+      "headcount": 445,
+      "officerMiles": 24190.795934554168,
+      "origin": "Thames Valley"
+    },
+    {
+      "destination": "Hampshire & Isle of Wight",
+      "haversineMiles": 40.33984875146312,
+      "headcount": 533,
+      "officerMiles": 21501.139384529844,
+      "origin": "Surrey"
+    },
+    {
+      "destination": "West Yorkshire",
+      "haversineMiles": 37.90976559186288,
+      "headcount": 561,
+      "officerMiles": 21267.378497035075,
+      "origin": "Lancashire"
+    },
+    {
+      "destination": "West Yorkshire",
+      "haversineMiles": 50.31922553647244,
+      "headcount": 407,
+      "officerMiles": 20479.924793344282,
+      "origin": "Cheshire"
+    },
+    {
+      "destination": "South Yorkshire",
+      "haversineMiles": 50.833708154180414,
+      "headcount": 379,
+      "officerMiles": 19265.975390434378,
+      "origin": "Lincolnshire"
+    },
+    {
+      "destination": "South Yorkshire",
+      "haversineMiles": 122.12473197149322,
+      "headcount": 134,
+      "officerMiles": 16364.714084180092,
+      "origin": "Hertfordshire"
+    },
+    {
+      "destination": "Suffolk",
+      "haversineMiles": 67.37513329403973,
+      "headcount": 241,
+      "officerMiles": 16237.407123863575,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "West Yorkshire",
+      "haversineMiles": 51.111386060381975,
+      "headcount": 305,
+      "officerMiles": 15588.972748416501,
+      "origin": "Humberside"
+    },
+    {
+      "destination": "Derbyshire",
+      "haversineMiles": 63.86750965116192,
+      "headcount": 221,
+      "officerMiles": 14114.719632906783,
+      "origin": "Northamptonshire"
+    },
+    {
+      "destination": "Northumbria",
+      "haversineMiles": 69.68068908951133,
+      "headcount": 159,
+      "officerMiles": 11079.229565232303,
+      "origin": "Cumbria"
+    },
+    {
+      "destination": "Norfolk",
+      "haversineMiles": 91.32226178321898,
+      "headcount": 120,
+      "officerMiles": 10958.671413986278,
+      "origin": "London forces: Metropolitan Police + City of London Police"
+    },
+    {
+      "destination": "Durham",
+      "haversineMiles": 81.991519720367,
+      "headcount": 107,
+      "officerMiles": 8773.092610079268,
+      "origin": "Humberside"
+    },
+    {
+      "destination": "Suffolk",
+      "haversineMiles": 40.916229399623035,
+      "headcount": 206,
+      "officerMiles": 8428.743256322345,
+      "origin": "Essex"
+    },
+    {
+      "destination": "West Yorkshire",
+      "haversineMiles": 72.4564089650194,
+      "headcount": 91,
+      "officerMiles": 6593.533215816766,
+      "origin": "Lincolnshire"
+    },
+    {
+      "destination": "Durham",
+      "haversineMiles": 58.657115227266225,
+      "headcount": 87,
+      "officerMiles": 5103.169024772162,
+      "origin": "Cumbria"
+    },
+    {
+      "destination": "Sussex",
+      "haversineMiles": 30.908717162620725,
+      "headcount": 92,
+      "officerMiles": 2843.601978961107,
+      "origin": "Surrey"
+    },
+    {
+      "destination": "Cleveland",
+      "haversineMiles": 67.92487920982158,
+      "headcount": 10,
+      "officerMiles": 679.2487920982159,
+      "origin": "Humberside"
+    },
+    {
+      "destination": "Nottinghamshire",
+      "haversineMiles": 93.51589998561093,
+      "headcount": 4,
+      "officerMiles": 374.0635999424437,
+      "origin": "Hertfordshire"
+    }
+  ]
+}
