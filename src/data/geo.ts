@@ -16,10 +16,22 @@ const SOURCES = [
   "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Police_Force_Areas_December_2023_EW_BFE/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&outSR=4326&returnGeometry=true&generalize=true&maxAllowableOffset=0.003&geometryPrecision=5",
 ];
 
+const BOUNDARY_FETCH_TIMEOUT_MS = 3500;
+
+async function fetchWithTimeout(url: string): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), BOUNDARY_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function fetchForceBoundaries(): Promise<FeatureCollection> {
   for (const url of SOURCES) {
     try {
-      const r = await fetch(url);
+      const r = await fetchWithTimeout(url);
       if (r.ok) {
         const data = (await r.json()) as FeatureCollection;
         if (data.features?.length) return withMissingForceFeatures(data);
@@ -122,7 +134,7 @@ function withMissingForceFeatures(data: FeatureCollection): FeatureCollection {
   };
 }
 
-function fallbackForceBoundaries(): FeatureCollection {
+export function fallbackForceBoundaries(): FeatureCollection {
   return {
     type: "FeatureCollection",
     features: forces.map((force) => approximateFeature(force.name)),

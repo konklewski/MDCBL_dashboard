@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { GeoJSONSource, Map as MapboxMap, Marker } from "mapbox-gl";
 import { useQuery } from "@tanstack/react-query";
 import { useApp } from "@/state/useAppStore";
-import { fetchForceBoundaries, normalizeForceName, centroid, arcLine, approximateForceCenter } from "@/data/geo";
+import {
+  fetchForceBoundaries,
+  fallbackForceBoundaries,
+  normalizeForceName,
+  centroid,
+  arcLine,
+  approximateForceCenter,
+} from "@/data/geo";
 import { forceByName, forces } from "@/data/forces";
 import { originsFor, destinationsFor } from "@/data/transfers";
 import { MapToggle } from "./MapToggle";
@@ -32,10 +39,17 @@ export function ForceMap() {
   const selectedForceName = useApp((s) => s.selectedForceName);
   const setSelected = useApp((s) => s.setSelected);
   const setHover = useApp((s) => s.setHover);
+  const modeRef = useRef(mode);
+  const selectedRef = useRef(selectedForceName);
 
-  const { data: geo } = useQuery({
+  modeRef.current = mode;
+  selectedRef.current = selectedForceName;
+
+  const fallbackGeo = useMemo(() => fallbackForceBoundaries(), []);
+  const { data: geo = fallbackGeo } = useQuery({
     queryKey: ["force-boundaries"],
     queryFn: fetchForceBoundaries,
+    placeholderData: fallbackGeo,
     staleTime: Infinity,
   });
 
@@ -49,6 +63,118 @@ export function ForceMap() {
     }
     return m;
   }, []);
+
+  const coordFor = (forceName: string): [number, number] | null => {
+    const coord = centroidsRef.current.get(forceName) ?? approximateForceCenter(forceName);
+    if (coord && !centroidsRef.current.has(forceName)) centroidsRef.current.set(forceName, coord);
+    return coord;
+  };
+
+  const flowFeatureCollectionFor = (forceName: string | null) => {
+    const fc = { type: "FeatureCollection" as const, features: [] as any[] };
+    if (modeRef.current !== "optimized" || !forceName) return fc;
+
+    const selectedCoord = coordFor(forceName);
+    if (!selectedCoord) return fc;
+
+    for (const t of destinationsFor(forceName)) {
+      const destination = coordFor(t.destination);
+      if (!destination) continue;
+      fc.features.push({
+        type: "Feature",
+        properties: {
+          headcount: t.headcount,
+          origin: t.origin,
+          destination: t.destination,
+          direction: "outbound",
+          selectedForce: forceName,
+        },
+        geometry: { type: "LineString", coordinates: arcLine(selectedCoord, destination) },
+      });
+    }
+
+    for (const t of originsFor(forceName)) {
+      const origin = coordFor(t.origin);
+      if (!origin) continue;
+      fc.features.push({
+        type: "Feature",
+        properties: {
+          headcount: t.headcount,
+          origin: t.origin,
+          destination: t.destination,
+          direction: "inbound",
+          selectedForce: forceName,
+        },
+        geometry: { type: "LineString", coordinates: arcLine(origin, selectedCoord) },
+      });
+    }
+
+    return fc;
+  };
+
+  const ensureArchesLayers = (map: MapboxMap, data: ReturnType<typeof flowFeatureCollectionFor>) => {
+    if (!map.getSource("arches")) map.addSource("arches", { type: "geojson", data: data as any });
+    if (!map.getLayer("arches-glow"))
+      map.addLayer({
+        id: "arches-glow",
+        type: "line",
+        source: "arches",
+        slot: "top",
+        paint: {
+          "line-color": [
+            "match",
+            ["get", "direction"],
+            "outbound",
+            "#b45f4d",
+            "inbound",
+            "#5f8f68",
+            "#2f6ea8",
+          ],
+          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 3, 2000, 8],
+          "line-opacity": 0.2,
+          "line-blur": 4,
+        },
+      });
+    if (!map.getLayer("arches-line"))
+      map.addLayer({
+        id: "arches-line",
+        type: "line",
+        source: "arches",
+        slot: "top",
+        paint: {
+          "line-color": [
+            "match",
+            ["get", "direction"],
+            "outbound",
+            "#a74735",
+            "inbound",
+            "#4f7f58",
+            "#1e4f7a",
+          ],
+          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 1.2, 2000, 3],
+          "line-opacity": 0.95,
+        },
+      });
+  };
+
+  const syncFlowLines = (forceName = selectedRef.current) => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const data = flowFeatureCollectionFor(forceName);
+    containerRef.current?.setAttribute("data-flow-selected", forceName ?? "");
+    containerRef.current?.setAttribute("data-flow-count", String(data.features.length));
+    if (!map.isStyleLoaded()) {
+      map.once("idle", () => syncFlowLines(forceName));
+      return;
+    }
+
+    if (map.getLayer("arches-line")) map.removeLayer("arches-line");
+    if (map.getLayer("arches-glow")) map.removeLayer("arches-glow");
+    if (map.getSource("arches")) map.removeSource("arches");
+    if (data.features.length > 0) ensureArchesLayers(map, data);
+    map.triggerRepaint();
+  };
 
   // Init map
   useEffect(() => {
@@ -141,7 +267,7 @@ export function ForceMap() {
   // Add boundary outline layer when geo + map ready (no fill — keep Mapbox basemap visible)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !geo) return;
+    if (!map) return;
 
     const ensure = () => {
       const features = geo.features.map((f) => {
@@ -196,15 +322,15 @@ export function ForceMap() {
               "case",
               ["==", ["get", "forceName"], selectedForceName ?? ""],
               "#1e4f7a",
-              "#2a2418",
+              "#18181b",
             ],
             "line-width": [
               "case",
               ["==", ["get", "forceName"], selectedForceName ?? ""],
-              2.2,
-              0.9,
+              3.0,
+              1.4,
             ],
-            "line-opacity": 0.65,
+            "line-opacity": 0.88,
           },
         });
 
@@ -220,7 +346,11 @@ export function ForceMap() {
         });
         map.on("click", "forces-fill", (e) => {
           const f = e.features?.[0];
-          if (f) setSelected(f.properties?.forceName as string);
+          const forceName = f?.properties?.forceName as string | undefined;
+          if (!forceName) return;
+          selectedRef.current = forceName;
+          setSelected(forceName);
+          syncFlowLines(forceName);
         });
       }
     };
@@ -243,13 +373,13 @@ export function ForceMap() {
       "case",
       ["==", ["get", "forceName"], selectedForceName ?? ""],
       "#1e4f7a",
-      "#2a2418",
+      "#18181b",
     ]);
     map.setPaintProperty("forces-line", "line-width", [
       "case",
       ["==", ["get", "forceName"], selectedForceName ?? ""],
-      2.2,
-      0.9,
+      3.0,
+      1.4,
     ]);
   }, [selectedForceName]);
 
@@ -261,7 +391,7 @@ export function ForceMap() {
     const render = () => {
       const mapboxgl = mapboxRef.current;
       if (!mapboxgl) return;
-      if (geo && centroidsRef.current.size === 0) {
+      if (centroidsRef.current.size === 0) {
         for (const feature of geo.features) {
           const raw =
             feature.properties?.PFA23NM ||
@@ -288,6 +418,7 @@ export function ForceMap() {
 
         const el = document.createElement("div");
         el.className = "force-badge";
+        el.dataset.forceName = forceName;
         el.style.cursor = "pointer";
         const selected = forceName === selectedForceName;
         const deltaHtml =
@@ -308,7 +439,9 @@ export function ForceMap() {
         `;
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
+          selectedRef.current = forceName;
           setSelected(forceName);
+          syncFlowLines(forceName);
         });
         const marker = new mapboxgl.Marker({ element: el, anchor: "center" })
           .setLngLat(coord)
@@ -323,49 +456,7 @@ export function ForceMap() {
 
   // Render arches in optimized + selected
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const setArches = () => {
-      const fc = { type: "FeatureCollection" as const, features: [] as any[] };
-      if (mode === "optimized" && selectedForceName) {
-        const dest = centroidsRef.current.get(selectedForceName);
-        if (dest) {
-          for (const t of originsFor(selectedForceName)) {
-            const from = centroidsRef.current.get(t.origin);
-            if (!from) continue;
-            const coords = arcLine(from, dest);
-            fc.features.push({
-              type: "Feature",
-              properties: { headcount: t.headcount },
-              geometry: { type: "LineString", coordinates: coords },
-            });
-          }
-        }
-      }
-      const src = map.getSource("arches") as GeoJSONSource | undefined;
-      if (src) src.setData(fc as any);
-      else {
-        if (!map.getSource("arches")) map.addSource("arches", { type: "geojson", data: fc as any });
-        if (!map.getLayer("arches-glow"))
-          map.addLayer({
-            id: "arches-glow",
-            type: "line",
-            source: "arches",
-            slot: "top",
-            paint: { "line-color": "#2f6ea8", "line-width": 6, "line-opacity": 0.18, "line-blur": 4 },
-          });
-        if (!map.getLayer("arches-line"))
-          map.addLayer({
-            id: "arches-line",
-            type: "line",
-            source: "arches",
-            slot: "top",
-            paint: { "line-color": "#1e4f7a", "line-width": 1.5, "line-opacity": 0.95 },
-          });
-      }
-    };
-    if (map.isStyleLoaded()) setArches();
-    else map.once("style.load", setArches);
+    syncFlowLines(selectedForceName);
   }, [mode, selectedForceName, geo]);
 
   if (!token) return <TokenGate />;
@@ -417,6 +508,8 @@ function Legend() {
           <span className="flex items-center gap-2"><span>👮</span> Current FTE</span>
           <span className="flex items-center gap-2"><span className="text-deficit">−x</span> Officers re-allocated out</span>
           <span className="flex items-center gap-2"><span className="text-surplus">+y</span> Officers arriving</span>
+          <span className="flex items-center gap-2"><span className="h-px w-5 bg-deficit" /> Selected force outbound flow</span>
+          <span className="flex items-center gap-2"><span className="h-px w-5 bg-surplus" /> Selected force inbound flow</span>
         </div>
       ) : (
         <div className="flex flex-col gap-1">
