@@ -1,57 +1,51 @@
-# Backend Data Manifest
+# Data Manifest
 
-## Present In Backend
+What lives in this backend and what each artefact is for.
 
-- `Crime severity scores.docx`: CCHI category median source.
-- `Police force in England.xlsx`: baseline headcount and core grant source.
-- `data/File_5_IoD2019_Scores.xlsx`: IMD 2019 LSOA score source.
-- `data/street_from_2018.parquet`: street crime source used for LSOA-force mapping and historical operations.
-- `data/street_from_2021.parquet`: street crime source used for 2025 CHI computation.
-- `data/stop_and_search_from_2021.parquet`: stop-and-search source used for hit-rate computation.
-- `data/stop_and_searchfrom_2018.parquet`: legacy stop-and-search source retained from research folder.
-- `data/outcomes_from_2018.parquet`: legacy outcomes source retained from research folder.
-- `data/outcomes_from_2021.parquet`: legacy outcomes source retained from research folder.
-- `legacy_scripts/*.py`: original research scripts copied for auditability.
-- `pipeline.py`: consolidated backend recomputation pipeline.
-- `cache/research_snapshot.json`: current API cache.
+## Raw inputs (`data/` and root)
 
-## Current Cache Correctness
+- `Crime severity scores.docx` — Cambridge Crime Harm Index category weights.
+- `Police force in England.xlsx` — baseline force headcount and core grant.
+- `data/File_5_IoD2019_Scores.xlsx` — IoD 2019 LSOA deprivation scores.
+- `data/street_from_2021.parquet` — 2021–2025 street crime; forecast features
+  and 2025 recorded-crime counts.
+- `data/street_from_2018.parquet` — 2018+ street crime; LSOA→force mapping in
+  the full recompute path.
+- `data/stop_and_search_from_2021.parquet` — stop-and-search hit-rate inputs.
 
-Current cache mode: `from-existing`.
+## Outputs (`report/`)
 
-Correct in current cache:
+- `reallocation_targets_2026.csv` — per-force 2026 forecast CHI, hit rate,
+  baseline FTE, proposed FTE and delta.
+- `optimized_officer_transfers_2026.csv` — Haversine LP transfer legs for the
+  2026 scenario.
+- `optimized_officer_transfers.csv` — earlier transfer scenario, retained for
+  reference.
+- `lsoa_harm_surface.csv` — per-LSOA demand surface and suggested LSOA officer
+  totals; input to the internal-allocation step.
+- `sortedLsoaOfficerAllocation.csv` — internal LSOA officer allocation summary;
+  source for `src/data/lloydAllocation.generated.ts`.
 
-- CCHI median parsing from `Crime severity scores.docx`.
-- baseline FTE and core grant from `Police force in England.xlsx`.
-- optimized transfer legs from `report/optimized_officer_transfers.csv`.
-- national reallocation summary from `feedback/reallocation_optimization_audit.md`.
-- unsupported-force scope flags.
+## Cache
 
-Not present in current cache until full recompute:
+- `cache/research_snapshot.json` — assembled snapshot consumed by
+  `src/data/researchSnapshot.generated.ts`.
 
-- per-force observed CHI.
-- per-force Random Forest predicted CHI.
-- per-force spatial lag CHI.
-- per-force stop-and-search hit rate.
-- per-force IMD aggregate values.
-- per-force centroid coordinates.
-- per-force crime category counts.
-- top high-demand LSOAs.
+## What the snapshot carries
 
-## Not Implemented Because Data/Model Missing
+Per force: baseline FTE and core grant, predicted 2026 CHI, stop-and-search
+hit rate, proposed FTE and transfer legs, and force-scope flags. Per-force
+land area and 2025 crime-category counts are generated separately into
+`src/data/forceFacts.generated.ts` by `scripts/generate_force_facts.py`.
 
-- Internal LSOA officer deployment.
-- Lloyd/k-means station allocation.
-- station capacity constraints.
-- response-time objective.
-- LSOA-level final officer targets.
+## Modelling boundary
 
-The old UI animation for Lloyd was a placeholder and has been removed.
+The 2026 cache uses `predicted_chi_2026` from `forecast_and_reallocate_2026.py`
+as the demand signal driving reallocation — a yearly Random Forest forecast over
+the 2021–2025 force-year panel using previous-year CHI, lagged spatial-neighbour
+CHI and force-level deprivation features, followed by stop-and-search efficiency
+multipliers, Hamilton apportionment and Haversine LP transport.
 
-## Known Research Inconsistency
-
-`feedback/reallocation_optimization_audit.md` says Random Forest predicted CHI feeds allocation.
-
-`legacy_scripts/run_reallocation.py` computes allocation using observed `total_chi` from 2025 street incidents.
-
-Backend preserves this distinction. No predicted-CHI allocation is claimed unless full recompute is changed and rerun with that explicit basis.
+Internal within-force placement (LSOA officer positions) is produced by the
+weighted-Lloyd's method in `internal_allocation/`, separate from the inter-force
+LP above.

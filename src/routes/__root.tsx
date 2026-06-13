@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportClientError } from "../lib/error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -38,7 +38,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportClientError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -77,18 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "A geospatial web app for UK Police resource reallocation, visualizing force boundaries and optimized allocation." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "A geospatial web app for UK Police resource reallocation, visualizing force boundaries and optimized allocation." },
+      { title: "Force Flow · UK Police Resource Reallocation" },
+      { name: "description", content: "A geospatial web app for UK police resource reallocation, visualising force boundaries and optimised officer allocation." },
+      { property: "og:title", content: "Force Flow · UK Police Resource Reallocation" },
+      { property: "og:description", content: "A geospatial web app for UK police resource reallocation, visualising force boundaries and optimised officer allocation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "A geospatial web app for UK Police resource reallocation, visualizing force boundaries and optimized allocation." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dcc58269-a81d-4cf0-8949-9e0ebc6a748e/id-preview-48795615--2b83d655-17c2-4c5a-ac0b-40beaa7e94ec.lovable.app-1780132331929.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dcc58269-a81d-4cf0-8949-9e0ebc6a748e/id-preview-48795615--2b83d655-17c2-4c5a-ac0b-40beaa7e94ec.lovable.app-1780132331929.png" },
+      { name: "twitter:title", content: "Force Flow · UK Police Resource Reallocation" },
+      { name: "twitter:description", content: "A geospatial web app for UK police resource reallocation, visualising force boundaries and optimised officer allocation." },
     ],
     links: [
       {

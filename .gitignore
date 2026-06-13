@@ -20,13 +20,13 @@ dist-ssr
 .wrangler/
 .dev.vars
 
-# Lovable & project docs
-.lovable
-Multidisciplinary CBL/
-
 # Large data files
 backend/research_pipeline/data/*.parquet
 backend/research_pipeline/data/*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
 
 # Editor directories and files
 .vscode/*

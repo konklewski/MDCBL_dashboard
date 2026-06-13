@@ -23,6 +23,7 @@ const UK_BOUNDS: [[number, number], [number, number]] = [
 ];
 
 type MapboxModule = typeof import("mapbox-gl").default;
+const PINNED_LABEL_FORCES = new Set(["City of London", "Metropolitan Police"]);
 
 export function ForceMap() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,8 +50,14 @@ export function ForceMap() {
   const { data: geo = fallbackGeo } = useQuery({
     queryKey: ["force-boundaries"],
     queryFn: fetchForceBoundaries,
+    // Show placeholder rectangles immediately, but keep retrying the real source in
+    // the background so a slow first load self-heals instead of sticking on rectangles.
     placeholderData: fallbackGeo,
     staleTime: Infinity,
+    retry: 5,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   // Precompute per-force flow numbers.
@@ -65,6 +72,7 @@ export function ForceMap() {
   }, []);
 
   const coordFor = (forceName: string): [number, number] | null => {
+    if (PINNED_LABEL_FORCES.has(forceName)) return approximateForceCenter(forceName);
     const coord = centroidsRef.current.get(forceName) ?? approximateForceCenter(forceName);
     if (coord && !centroidsRef.current.has(forceName)) centroidsRef.current.set(forceName, coord);
     return coord;
@@ -114,6 +122,8 @@ export function ForceMap() {
 
   const ensureArchesLayers = (map: MapboxMap, data: ReturnType<typeof flowFeatureCollectionFor>) => {
     if (!map.getSource("arches")) map.addSource("arches", { type: "geojson", data: data as any });
+    // Dark casing rendered underneath the coloured line so the flows read against
+    // the green basemap (a colour-on-colour line otherwise disappears over land).
     if (!map.getLayer("arches-glow"))
       map.addLayer({
         id: "arches-glow",
@@ -121,18 +131,10 @@ export function ForceMap() {
         source: "arches",
         slot: "top",
         paint: {
-          "line-color": [
-            "match",
-            ["get", "direction"],
-            "outbound",
-            "#b45f4d",
-            "inbound",
-            "#5f8f68",
-            "#2f6ea8",
-          ],
-          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 3, 2000, 8],
-          "line-opacity": 0.2,
-          "line-blur": 4,
+          "line-color": "#0b0f14",
+          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 3.4, 2000, 7.5],
+          "line-opacity": 0.55,
+          "line-blur": 0.6,
         },
       });
     if (!map.getLayer("arches-line"))
@@ -142,17 +144,19 @@ export function ForceMap() {
         source: "arches",
         slot: "top",
         paint: {
+          // Vivid, high-saturation hues. Semantic preserved: inbound (officers
+          // arriving / deficit) = green, outbound (leaving / surplus) = red.
           "line-color": [
             "match",
             ["get", "direction"],
             "outbound",
-            "#a74735",
+            "#ff4438",
             "inbound",
-            "#4f7f58",
-            "#1e4f7a",
+            "#10e06a",
+            "#36a3ff",
           ],
-          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 1.2, 2000, 3],
-          "line-opacity": 0.95,
+          "line-width": ["interpolate", ["linear"], ["get", "headcount"], 1, 1.6, 2000, 4],
+          "line-opacity": 1,
         },
       });
   };
@@ -280,7 +284,7 @@ export function ForceMap() {
           f.properties?.NAME;
         const forceName = normalizeForceName(raw);
         if (forceName && !centroidsRef.current.has(forceName)) {
-          centroidsRef.current.set(forceName, centroid(f.geometry));
+          centroidsRef.current.set(forceName, approximateForceCenter(forceName) ?? centroid(f.geometry));
         }
         return {
           ...f,
@@ -401,7 +405,7 @@ export function ForceMap() {
             feature.properties?.name ||
             feature.properties?.NAME;
           const forceName = normalizeForceName(raw);
-          if (forceName) centroidsRef.current.set(forceName, centroid(feature.geometry));
+          if (forceName) centroidsRef.current.set(forceName, approximateForceCenter(forceName) ?? centroid(feature.geometry));
         }
       }
       // Clear existing markers
@@ -410,7 +414,9 @@ export function ForceMap() {
 
       forces.forEach((force) => {
         const forceName = force.name;
-        const coord = centroidsRef.current.get(forceName) ?? approximateForceCenter(forceName);
+        const coord = PINNED_LABEL_FORCES.has(forceName)
+          ? approximateForceCenter(forceName)
+          : centroidsRef.current.get(forceName) ?? approximateForceCenter(forceName);
         if (!coord) return;
         if (!centroidsRef.current.has(forceName)) centroidsRef.current.set(forceName, coord);
         const flow = flows.get(forceName) ?? { inflow: 0, outflow: 0 };

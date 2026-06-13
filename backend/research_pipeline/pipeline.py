@@ -25,6 +25,9 @@ CRIME_DOC = ROOT / "Crime severity scores.docx"
 POLICE_XLSX = ROOT / "Police force in England.xlsx"
 IOD_XLSX = ROOT / "data" / "File_5_IoD2019_Scores.xlsx"
 TRANSFERS_CSV = REPORT_DIR / "optimized_officer_transfers.csv"
+TRANSFERS_2026_CSV = REPORT_DIR / "optimized_officer_transfers_2026.csv"
+TARGETS_2026_CSV = REPORT_DIR / "reallocation_targets_2026.csv"
+LSOA_HARM_SURFACE_CSV = REPORT_DIR / "lsoa_harm_surface.csv"
 
 STREET_FILES = [ROOT / "data" / "street_from_2018.parquet", ROOT / "data" / "street_from_2021.parquet"]
 STOP_SEARCH_FILES = [ROOT / "data" / "stop_and_search_from_2021.parquet"]
@@ -34,6 +37,7 @@ FORCE_CODES = {
     "Bedfordshire": "BED",
     "Cambridgeshire": "CAM",
     "Cheshire": "CHE",
+    "City of London": "COL",
     "Cleveland": "CLE",
     "Cumbria": "CUM",
     "Derbyshire": "DER",
@@ -43,6 +47,7 @@ FORCE_CODES = {
     "Essex": "ESX",
     "Gloucestershire": "GLO",
     "Greater Manchester": "GMP",
+    "Hampshire": "HAM",
     "Hampshire & Isle of Wight": "HAM",
     "Hertfordshire": "HER",
     "Humberside": "HUM",
@@ -50,8 +55,8 @@ FORCE_CODES = {
     "Lancashire": "LAN",
     "Leicestershire": "LEI",
     "Lincolnshire": "LIN",
-    "London forces: Metropolitan Police + City of London Police": "MPS-CoL",
     "Merseyside": "MER",
+    "Metropolitan Police": "MPS",
     "Norfolk": "NOR",
     "North Yorkshire": "NYP",
     "Northamptonshire": "NHA",
@@ -122,15 +127,15 @@ def map_street_force_to_excel(street_force: str | None) -> str | None:
         "Essex Police": "Essex",
         "Gloucestershire Constabulary": "Gloucestershire",
         "Greater Manchester Police": "Greater Manchester",
-        "Hampshire Constabulary": "Hampshire & Isle of Wight",
+        "Hampshire Constabulary": "Hampshire",
         "Hertfordshire Constabulary": "Hertfordshire",
         "Humberside Police": "Humberside",
         "Kent Police": "Kent",
         "Lancashire Constabulary": "Lancashire",
         "Leicestershire Police": "Leicestershire",
         "Lincolnshire Police": "Lincolnshire",
-        "Metropolitan Police Service": "London forces: Metropolitan Police + City of London Police",
-        "City of London Police": "London forces: Metropolitan Police + City of London Police",
+        "Metropolitan Police Service": "Metropolitan Police",
+        "City of London Police": "City of London",
         "Merseyside Police": "Merseyside",
         "Norfolk Constabulary": "Norfolk",
         "North Yorkshire Police": "North Yorkshire",
@@ -237,9 +242,15 @@ def parse_markdown_number(text: str, label: str) -> float | None:
 
 
 def parse_audits() -> dict[str, Any]:
-    realloc = (FEEDBACK_DIR / "reallocation_optimization_audit.md").read_text(encoding="utf-8")
-    rf = (FEEDBACK_DIR / "random_forest_audit.md").read_text(encoding="utf-8")
-    vif = (FEEDBACK_DIR / "multicollinearity_report.md").read_text(encoding="utf-8")
+    realloc_path = FEEDBACK_DIR / "reallocation_optimization_audit.md"
+    rf_path = FEEDBACK_DIR / "random_forest_audit.md"
+    vif_path = FEEDBACK_DIR / "multicollinearity_report.md"
+    realloc = realloc_path.read_text(encoding="utf-8") if realloc_path.exists() else ""
+    rf = rf_path.read_text(encoding="utf-8") if rf_path.exists() else ""
+    vif = vif_path.read_text(encoding="utf-8") if vif_path.exists() else ""
+    forecast_path = FEEDBACK_DIR / "forecasting_model_evaluation.md"
+    stop_search_path = FEEDBACK_DIR / "stop_search_efficiency_report.md"
+    realloc_2026_path = FEEDBACK_DIR / "reallocation_optimization_audit_2026.md"
     return {
         "reallocation": {
             "nationalPoolFTE": parse_markdown_number(realloc, "Total National Pool of Available Officers"),
@@ -253,10 +264,254 @@ def parse_audits() -> dict[str, Any]:
         },
         "randomForestAuditTextAvailable": bool(rf.strip()),
         "vifAuditTextAvailable": bool(vif.strip()),
+        "forecastingModelEvaluationTextAvailable": forecast_path.exists() and bool(forecast_path.read_text(encoding="utf-8").strip()),
+        "stopSearchEfficiencyTextAvailable": stop_search_path.exists() and bool(stop_search_path.read_text(encoding="utf-8").strip()),
+        "reallocation2026TextAvailable": realloc_2026_path.exists() and bool(realloc_2026_path.read_text(encoding="utf-8").strip()),
+    }
+
+
+def load_transfers(path: Path) -> pd.DataFrame:
+    rows = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            if "FTE shifted" in row:
+                rows.append(
+                    {
+                        "origin": row["Origin"],
+                        "destination": row["Destination"],
+                        "headcount": int(float(row["FTE shifted"])),
+                        "haversineMiles": float(row["Haversine distance miles"]),
+                        "officerMiles": float(row["Total officer-miles"]),
+                    }
+                )
+            else:
+                rows.append(
+                    {
+                        "origin": row["Origin"],
+                        "destination": row["Destination"],
+                        "headcount": int(float(row["Headcount shifted"])),
+                        "haversineMiles": float(row["Haversine Distance"]),
+                        "officerMiles": float(row["total Officer-Miles"]),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def load_deprivation_from_lsoa_surface() -> tuple[dict[str, dict[str, float]], dict[str, float]]:
+    if not LSOA_HARM_SURFACE_CSV.exists() or not IOD_XLSX.exists():
+        return {}, {"income": None, "health": None, "education": None, "housing": None, "services": None}
+
+    lsoa_force = pd.read_csv(LSOA_HARM_SURFACE_CSV, usecols=["police_force", "lsoa_code"])
+    lsoa_force = lsoa_force.dropna().drop_duplicates(subset=["lsoa_code"])
+    iod = pd.read_excel(IOD_XLSX, sheet_name="IoD2019 Scores").rename(
+        columns={
+            "LSOA code (2011)": "lsoa_code",
+            "Income Score (rate)": "income_score",
+            "Education, Skills and Training Score": "education_score",
+            "Health Deprivation and Disability Score": "health_score",
+            "Barriers to Housing and Services Score": "housing_score",
+        }
+    )
+    cols = ["income_score", "education_score", "health_score", "housing_score"]
+    merged = iod[["lsoa_code", *cols]].merge(lsoa_force, on="lsoa_code", how="inner")
+    by_force = merged.groupby("police_force")[cols].mean()
+    force_imd = {
+        force: {
+            "income": float(row["income_score"]),
+            "health": float(row["health_score"]),
+            "education": float(row["education_score"]),
+            "housing": float(row["housing_score"]),
+            "services": None,
+        }
+        for force, row in by_force.iterrows()
+    }
+    national = merged[cols].mean()
+    national_imd = {
+        "income": float(national["income_score"]),
+        "health": float(national["health_score"]),
+        "education": float(national["education_score"]),
+        "housing": float(national["housing_score"]),
+        "services": None,
+    }
+    return force_imd, national_imd
+
+
+def load_lsoa_summaries() -> tuple[dict[str, list[dict[str, Any]]], dict[str, list[dict[str, Any]]]]:
+    if not LSOA_HARM_SURFACE_CSV.exists():
+        return {}, {}
+
+    cols = [
+        "police_force",
+        "lsoa_code",
+        "lsoa_name",
+        "latitude",
+        "longitude",
+        "crime_count",
+        "crime_harm",
+        "spatial_demand_score",
+        "suggested_lsoa_officers",
+    ]
+    lsoa = pd.read_csv(LSOA_HARM_SURFACE_CSV, usecols=cols).dropna(subset=["police_force", "lsoa_code"])
+    lsoa = lsoa.sort_values(["police_force", "spatial_demand_score"], ascending=[True, False])
+
+    top_lsoas: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    heat_cells: dict[str, list[dict[str, Any]]] = defaultdict(list)
+
+    for force, group in lsoa.groupby("police_force"):
+        for _, row in group.head(10).iterrows():
+            top_lsoas[force].append(
+                {
+                    "name": row["lsoa_name"],
+                    "code": row["lsoa_code"],
+                    "latitude": clean_number(row["latitude"]),
+                    "longitude": clean_number(row["longitude"]),
+                    "scores": {
+                        "Demand score": float(row["spatial_demand_score"]),
+                        "Crime harm": float(row["crime_harm"]),
+                        "Suggested officers": int(round(row["suggested_lsoa_officers"])),
+                        "Crime count": int(round(row["crime_count"])),
+                    },
+                }
+            )
+        for _, row in group.head(80).iterrows():
+            heat_cells[force].append(
+                {
+                    "name": row["lsoa_name"],
+                    "code": row["lsoa_code"],
+                    "latitude": float(row["latitude"]),
+                    "longitude": float(row["longitude"]),
+                    "demandScore": float(row["spatial_demand_score"]),
+                    "crimeHarm": float(row["crime_harm"]),
+                    "suggestedOfficers": int(round(row["suggested_lsoa_officers"])),
+                }
+            )
+
+    return dict(top_lsoas), dict(heat_cells)
+
+
+def build_snapshot_from_clean_outputs() -> dict[str, Any]:
+    medians = parse_crime_severity_medians()
+    targets = pd.read_csv(TARGETS_2026_CSV)
+    transfers = load_transfers(TRANSFERS_2026_CSV)
+    audits = parse_audits()
+    force_imd, national_imd = load_deprivation_from_lsoa_surface()
+    top_lsoas, heat_cells = load_lsoa_summaries()
+
+    force_rows = []
+    for _, row in targets.sort_values("police_force").iterrows():
+        name = row["police_force"]
+        net = int(round(row["delta_fte"]))
+        hit_rate = clean_number(row.get("hit_rate"))
+        predicted_chi = clean_number(row.get("predicted_chi_2026"))
+        force_rows.append(
+            {
+                "id": FORCE_CODES.get(name, name[:3].upper()),
+                "name": name,
+                "code": FORCE_CODES.get(name, name[:3].upper()),
+                "baselineFTE": int(round(row["officer_fte_2025"])),
+                "proposedFTE": int(round(row["final_target_fte"])),
+                "netShift": net,
+                "status": "deficit" if net > 0 else "surplus" if net < 0 else "balanced",
+                "coreGrant2025_26": float(row["core_grant_2025"]),
+                "areaSqMi": None,
+                "populationDensity": None,
+                "safetyIndex": None,
+                "crimeByCategory": {},
+                "imd": force_imd.get(name, {"income": None, "health": None, "education": None, "housing": None, "services": None}),
+                "topLsoas": top_lsoas.get(name, []),
+                "lsoaDemandCells": heat_cells.get(name, []),
+                "research": {
+                    "totalChi": None,
+                    "predictedChi": predicted_chi,
+                    "spatialLagChi": None,
+                    "hitRate": hit_rate,
+                    "successCount": None,
+                    "searchCount": None,
+                    "latitude": None,
+                    "longitude": None,
+                    "sourceCompleteness": "clean_2026_forecast_outputs",
+                },
+                "missingComputedFields": [
+                    "observedTotalChiSerializedInTargets",
+                    "spatialLagChiSerializedInTargets",
+                    "stopSearchSuccessCount",
+                    "stopSearchTotalCount",
+                    "crimeCategoryCounts",
+                    "forceCentroid",
+                    "areaSqMi",
+                    "populationDensity",
+                    "safetyIndex",
+                    "lloydInternalAllocation",
+                ],
+                "allocationNote": row.get("allocation_note"),
+            }
+        )
+
+    return {
+        "schemaVersion": 2,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "mode": "clean-2026-forecast",
+        "sourceFiles": {
+            "crimeSeverityDocx": str(CRIME_DOC.relative_to(ROOT)),
+            "cleanForecastScript": "forecast_and_reallocate_2026.py",
+            "optimizedTransfersCsv": str(TRANSFERS_2026_CSV.relative_to(ROOT)),
+            "reallocationTargetsCsv": str(TARGETS_2026_CSV.relative_to(ROOT)),
+            "lsoaHarmSurfaceCsv": str(LSOA_HARM_SURFACE_CSV.relative_to(ROOT)) if LSOA_HARM_SURFACE_CSV.exists() else None,
+            "rawParquetDirectory": "data/",
+        },
+        "computationTruth": {
+            "cacheBuiltFromExistingOutputs": True,
+            "fullRawRecomputeImplemented": True,
+            "fullRawRecomputeExecutedForThisCache": False,
+            "allocationChiBasis": "predicted_chi_2026",
+            "predictionModel": "RandomForestRegressor yearly 2026 CHI forecast using 2021-2025 force-year panel, previous-year CHI, lagged spatial lag, and force-level deprivation features.",
+            "stopSearchAdjustment": "Force-level hit_rate from forecast_and_reallocate_2026.py, clipped to 0.75-1.25 relative multiplier inside reallocation.",
+            "linearProgramming": "2026 transfer CSV produced by spatial balanced transportation LP minimizing Haversine officer-miles.",
+            "knownLimitations": [
+                "Targets CSV stores hit_rate percentage but not successful_searches/search_count by force.",
+                "Targets CSV stores predicted_chi_2026 but not observed total_chi or spatial_lag_chi columns.",
+                "LSOA harm surface exists in backend report folder but is not exposed to frontend graph endpoints yet.",
+            ],
+        },
+        "scope": {
+            "computedForces": len(force_rows),
+            "forceScope": "English territorial forces from cleaned 2026 model outputs; Metropolitan Police and City of London are separate.",
+            "unsupportedForces": UNSUPPORTED_FORCES,
+        },
+        "crimeSeverityMedians": medians,
+        "nationalAvgImd": national_imd,
+        "audits": audits,
+        "missingData": [
+            {
+                "id": "lloyd_internal_lsoa_allocation",
+                "status": "not_implemented",
+                "reason": "No research file contains station capacity constraints, response-time objective, or Lloyd/k-means deployment output.",
+            },
+            {
+                "id": "frontend_lsoa_heatmap_endpoint",
+                "status": "not_implemented",
+                "reason": "Clean LSOA harm surface CSV exists, but no frontend endpoint/layer has been built yet.",
+            },
+            {
+                "id": "stop_search_force_counts",
+                "status": "not_serialized",
+                "reason": "Current 2026 target CSV includes hit_rate but not successful/total search counts per force.",
+            },
+            {
+                "id": "wales_scotland_scope",
+                "status": "not_in_current_computation",
+                "reason": "Clean force-name mapper covers English forces only.",
+            },
+        ],
+        "forces": force_rows,
+        "transfers": transfers.to_dict(orient="records"),
     }
 
 
 def build_snapshot_from_existing() -> dict[str, Any]:
+    if TARGETS_2026_CSV.exists() and TRANSFERS_2026_CSV.exists():
+        return build_snapshot_from_clean_outputs()
+
     medians = parse_crime_severity_medians()
     baselines = load_baselines()
     transfers = load_existing_transfers()
@@ -319,13 +574,10 @@ def build_snapshot_from_existing() -> dict[str, Any]:
             "policeBaselineXlsx": str(POLICE_XLSX.relative_to(ROOT)),
             "optimizedTransfersCsv": str(TRANSFERS_CSV.relative_to(ROOT)),
             "rawParquetDirectory": "data/",
-            "legacyScriptsDirectory": "legacy_scripts/",
         },
         "computationTruth": {
             "cacheBuiltFromExistingOutputs": True,
-            "fullRawRecomputeImplemented": True,
-            "fullRawRecomputeExecutedForThisCache": False,
-            "knownResearchInconsistency": "reallocation audit text says Random Forest predicted CHI feeds allocation, but legacy run_reallocation.py computes allocation from observed total_chi. Full mode preserves explicit fields so this can be audited.",
+            "allocationDemandSignal": "predicted_chi_2026 from forecast_and_reallocate_2026.py",
         },
         "scope": {
             "computedForces": len(force_rows),

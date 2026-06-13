@@ -16,7 +16,9 @@ const SOURCES = [
   "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Police_Force_Areas_December_2023_EW_BFE/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&outSR=4326&returnGeometry=true&generalize=true&maxAllowableOffset=0.003&geometryPrecision=5",
 ];
 
-const BOUNDARY_FETCH_TIMEOUT_MS = 3500;
+// The ArcGIS FeatureServer can be slow on a cold connection; give it room so we
+// don't fall back to placeholder rectangles just because the network was warming up.
+const BOUNDARY_FETCH_TIMEOUT_MS = 9000;
 
 async function fetchWithTimeout(url: string): Promise<Response> {
   const controller = new AbortController();
@@ -28,7 +30,13 @@ async function fetchWithTimeout(url: string): Promise<Response> {
   }
 }
 
+// Fetch the real ONS boundaries. THROWS on failure rather than silently returning
+// rectangles — this lets react-query retry instead of caching the fallback forever
+// (the cause of the "rectangles until manual refresh" bug). Callers should supply
+// fallbackForceBoundaries() as placeholderData so the UI still shows something while
+// the query retries in the background.
 export async function fetchForceBoundaries(): Promise<FeatureCollection> {
+  let lastError: unknown = null;
   for (const url of SOURCES) {
     try {
       const r = await fetchWithTimeout(url);
@@ -36,20 +44,25 @@ export async function fetchForceBoundaries(): Promise<FeatureCollection> {
         const data = (await r.json()) as FeatureCollection;
         if (data.features?.length) return withMissingForceFeatures(data);
       }
-    } catch {
-      // try next
+      lastError = new Error(`Boundary source returned ${r.status}`);
+    } catch (err) {
+      lastError = err;
     }
   }
-  return fallbackForceBoundaries();
+  throw lastError ?? new Error("Failed to fetch force boundaries");
 }
 
 // Map GeoJSON name property to our internal force name
 const NAME_ALIASES: Record<string, string> = {
-  "Metropolitan Police": "London forces: Metropolitan Police + City of London Police",
-  "City of London": "London forces: Metropolitan Police + City of London Police",
   "Avon and Somerset": "Avon & Somerset",
+  "Avon and Somerset Constabulary": "Avon & Somerset",
+  "City of London Police": "City of London",
   "Devon and Cornwall": "Devon & Cornwall",
-  "Hampshire": "Hampshire & Isle of Wight",
+  "Devon & Cornwall Police": "Devon & Cornwall",
+  "Hampshire and Isle of Wight": "Hampshire",
+  "Hampshire Constabulary": "Hampshire",
+  "Hampshire and Isle of Wight Constabulary": "Hampshire",
+  "Metropolitan Police Service": "Metropolitan Police",
   "Dyfed-Powys": "Dyfed-Powys",
 };
 
@@ -60,6 +73,8 @@ export function normalizeForceName(raw: string | undefined): string | null {
 
 const FORCE_CENTERS: Record<string, [number, number]> = {
   "London forces: Metropolitan Police + City of London Police": [-0.12, 51.5],
+  "Metropolitan Police": [-0.02, 51.485],
+  "City of London": [-0.092, 51.515],
   "West Midlands": [-1.9, 52.5],
   "Greater Manchester": [-2.24, 53.48],
   "West Yorkshire": [-1.55, 53.8],
@@ -68,6 +83,7 @@ const FORCE_CENTERS: Record<string, [number, number]> = {
   Merseyside: [-2.98, 53.41],
   "South Yorkshire": [-1.47, 53.38],
   "Hampshire & Isle of Wight": [-1.25, 50.95],
+  Hampshire: [-1.25, 50.95],
   Kent: [0.52, 51.25],
   Lancashire: [-2.7, 53.85],
   Essex: [0.48, 51.75],
@@ -109,6 +125,7 @@ export function approximateForceCenter(forceName: string): [number, number] | nu
 }
 
 function withMissingForceFeatures(data: FeatureCollection): FeatureCollection {
+  const computedForces = new Set(forces.map((force) => force.name));
   const present = new Set(
     data.features
       .map((feature) => {
@@ -121,8 +138,31 @@ function withMissingForceFeatures(data: FeatureCollection): FeatureCollection {
           feature.properties?.NAME;
         return normalizeForceName(raw);
       })
-      .filter(Boolean),
+      .filter((name): name is string => name !== null && computedForces.has(name)),
   );
+
+  const matchedFeatures = data.features.flatMap((feature) => {
+    const raw =
+      feature.properties?.PFA23NM ||
+      feature.properties?.PFA22NM ||
+      feature.properties?.PFA20NM ||
+      feature.properties?.pfa15nm ||
+      feature.properties?.name ||
+      feature.properties?.NAME;
+    const forceName = normalizeForceName(raw);
+    if (!forceName || !computedForces.has(forceName)) return [];
+    return [
+      {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          name: forceName,
+          PFA23NM: forceName,
+          PFA22NM: forceName,
+        },
+      },
+    ];
+  });
 
   const missing = forces
     .filter((force) => !present.has(force.name))
@@ -130,7 +170,7 @@ function withMissingForceFeatures(data: FeatureCollection): FeatureCollection {
 
   return {
     type: "FeatureCollection",
-    features: [...data.features, ...missing],
+    features: [...matchedFeatures, ...missing],
   };
 }
 
@@ -143,9 +183,51 @@ export function fallbackForceBoundaries(): FeatureCollection {
 
 function approximateFeature(forceName: string): GeoFeature {
   const [lng, lat] = FORCE_CENTERS[forceName] ?? [-2.6, 54.2];
+  if (forceName === "Metropolitan Police") {
+    return {
+      type: "Feature",
+      properties: { PFA23NM: forceName, PFA22NM: forceName, name: forceName, approximate: true },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-0.50, 51.43],
+          [-0.40, 51.53],
+          [-0.27, 51.62],
+          [-0.10, 51.69],
+          [0.08, 51.65],
+          [0.25, 51.57],
+          [0.33, 51.47],
+          [0.23, 51.37],
+          [0.06, 51.30],
+          [-0.13, 51.29],
+          [-0.30, 51.33],
+          [-0.45, 51.35],
+          [-0.50, 51.43],
+        ]],
+      },
+    };
+  }
+  if (forceName === "City of London") {
+    return {
+      type: "Feature",
+      properties: { PFA23NM: forceName, PFA22NM: forceName, name: forceName, approximate: true },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-0.113, 51.509],
+          [-0.102, 51.522],
+          [-0.075, 51.521],
+          [-0.071, 51.511],
+          [-0.091, 51.506],
+          [-0.113, 51.509],
+        ]],
+      },
+    };
+  }
   const isScotland = forceName === "Police Scotland (advisory)";
-  const w = isScotland ? 3.7 : 0.58;
-  const h = isScotland ? 3.8 : 0.44;
+  const isCity = forceName === "City of London";
+  const w = isScotland ? 3.7 : isCity ? 0.06 : 0.58;
+  const h = isScotland ? 3.8 : isCity ? 0.035 : 0.44;
 
   return {
     type: "Feature",

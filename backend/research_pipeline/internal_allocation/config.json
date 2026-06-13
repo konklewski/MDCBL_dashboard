@@ -1,0 +1,15 @@
+{
+  "force": "Kent",
+  "r_coverage_m": 5000.0,
+  "max_frames": 50,
+
+  "risk_floor": 0.01,
+  "risk_exponent": 1.0,
+  "n_density_samples": 15000,
+  "seed": 42,
+
+  "n_crimes": 1000,
+  "crime_rate_per_step": 0.1,
+  "nb_dispersion": 5.0,
+  "officer_busy_iters": 30
+}

@@ -1,4 +1,5 @@
 import { researchSnapshot } from "./researchSnapshot.generated";
+import { forceFacts } from "./forceFacts.generated";
 
 export interface Force {
   id: string;
@@ -20,7 +21,22 @@ export interface Force {
     housing: number | null;
     services: number | null;
   };
-  topLsoas: { name: string; scores: Record<string, number> }[];
+  topLsoas: {
+    name: string;
+    code?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    scores: Record<string, number>;
+  }[];
+  lsoaDemandCells: {
+    name: string;
+    code: string;
+    latitude: number;
+    longitude: number;
+    demandScore: number;
+    crimeHarm: number;
+    suggestedOfficers: number;
+  }[];
   research: {
     totalChi: number | null;
     predictedChi: number | null;
@@ -37,19 +53,41 @@ export interface Force {
 
 export const researchBackendSnapshot = researchSnapshot;
 
+// Crime categories sorted by count, descending (nicer Overview rendering).
+function sortCounts(counts: Record<string, number>): Record<string, number> {
+  return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
+}
+
 export const forces: Force[] = researchSnapshot.forces.map((force) => ({
   ...force,
   status: force.status as Force["status"],
-  crimeByCategory: { ...force.crimeByCategory },
+  // Overlay computed land area (sq mi) + observed 2025 crime counts. Snapshot
+  // ships these null/empty; forceFacts.generated.ts derives them from the ONS
+  // PFA24 shapefile and the police.uk street_from_2021 parquet.
+  areaSqMi: forceFacts[force.name]?.areaSqMi ?? force.areaSqMi,
+  crimeByCategory: sortCounts(forceFacts[force.name]?.crimeByCategory2025 ?? force.crimeByCategory),
   imd: { ...force.imd },
-  topLsoas: force.topLsoas.map((lsoa) => ({ name: lsoa.name, scores: { ...lsoa.scores } })),
+  topLsoas: force.topLsoas.map((lsoa) => ({
+    name: lsoa.name,
+    code: lsoa.code,
+    latitude: lsoa.latitude,
+    longitude: lsoa.longitude,
+    scores: { ...lsoa.scores },
+  })),
+  lsoaDemandCells: [...(force.lsoaDemandCells ?? [])],
   missingComputedFields: [...force.missingComputedFields],
 }));
 
 export const forceByName = new Map(forces.map((f) => [f.name, f]));
 export const forceById = new Map(forces.map((f) => [f.id, f]));
 
-export const NATIONAL_AVG_IMD = { income: null, health: null, education: null, housing: null, services: null };
+export const NATIONAL_AVG_IMD = researchSnapshot.nationalAvgImd ?? {
+  income: null,
+  health: null,
+  education: null,
+  housing: null,
+  services: null,
+};
 
 export const CRIME_CATEGORIES = Object.keys(researchSnapshot.crimeSeverityMedians).filter(
   (name) => name !== "Anti-social behavior",

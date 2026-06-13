@@ -1,6 +1,6 @@
 import { useApp } from "@/state/useAppStore";
 import { forces } from "@/data/forces";
-import { Search, LogOut } from "lucide-react";
+import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export function GlobalHeader() {
@@ -61,9 +61,6 @@ export function GlobalHeader() {
           <span className="h-1.5 w-1.5 rounded-full bg-surplus" />
           System Online
         </div>
-        <button className="flex items-center gap-2 px-3 py-1.5 border border-border-strong text-xs font-mono text-muted-foreground hover:text-foreground hover:border-data/60">
-          <LogOut className="h-3 w-3" /> Analyst
-        </button>
       </div>
     </header>
   );

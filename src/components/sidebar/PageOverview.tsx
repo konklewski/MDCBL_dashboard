@@ -2,19 +2,21 @@ import type { Force } from "@/data/forces";
 
 const fmt = (n: number) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 const fmtMaybe = (n: number | null, suffix = "") => (n == null ? "Not available" : `${fmt(n)}${suffix}`);
+const fmtPct = (n: number | null) => (n == null ? "Not available" : `${(n * 100).toFixed(1)}%`);
 
 export function PageOverview({ force }: { force: Force }) {
   const totalCrime = Object.values(force.crimeByCategory).reduce((s, n) => s + n, 0);
-  const statusTone = force.status === "surplus" ? "surplus" : force.status === "deficit" ? "deficit" : "data";
+  // Match map flow lines: deficit force gains officers (green), surplus sheds (red).
+  const statusTone = force.status === "deficit" ? "surplus" : force.status === "surplus" ? "deficit" : "data";
   return (
     <div className="p-4 space-y-4">
       <Section title="General Information">
         <Grid>
           <Stat label="System ID" value={force.id} mono />
           <Stat label="Area of Control" value={fmtMaybe(force.areaSqMi, " mi²")} />
-          <Stat label="Population Density" value={fmtMaybe(force.populationDensity, " /mi²")} />
           <Stat label="Baseline Officers (FTE)" value={fmt(force.baselineFTE)} />
           <Stat label="Core Grant 2025-26" value={`£${fmt(Math.round(force.coreGrant2025_26))}`} />
+          <Stat label="Stop & Search Hit Rate" value={fmtPct(force.research.hitRate)} />
         </Grid>
       </Section>
 
@@ -31,16 +33,16 @@ export function PageOverview({ force }: { force: Force }) {
           <div className="mt-2 text-xs text-muted-foreground leading-relaxed">
             Proposed FTE from backend transfer solution:{" "}
             <span className="font-mono text-foreground">{fmt(force.proposedFTE)}</span>.
-            Safety index not present in research outputs, so no synthetic score is shown.
+            Allocation uses 2026 forecast CHI and force-level stop-search efficiency.
           </div>
         </div>
       </Section>
 
-      <Section title={totalCrime > 0 ? `Historical Crime Counts · ${fmt(totalCrime)} total` : "Historical Crime Counts"}>
+      <Section title={totalCrime > 0 ? `Recorded Crime · 2025 · ${fmt(totalCrime)} total` : "Recorded Crime · 2025"}>
         {totalCrime === 0 ? (
           <Missing
-            title="Crime category counts unavailable in current cache"
-            body="Existing research reports do not serialize per-force crime category counts. Full backend recompute can derive them from street_from_2021.parquet."
+            title="No 2025 crime data published for this force"
+            body="Greater Manchester Police withdrew from the police.uk open-data feed, so no per-category street counts exist for 2025. All other forces show observed counts from street_from_2021.parquet."
           />
         ) : (
           <div className="border border-border-strong divide-y divide-border">

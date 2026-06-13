@@ -1,41 +1,84 @@
-# Research Backend Pipeline
+# Research Pipeline
 
-This backend owns the research inputs and recomputation logic used by the app.
+The data pipeline behind Force Flow. It turns raw crime, stop-and-search,
+deprivation and funding data into the optimised officer allocation, the
+inter-force transfer flows and the per-force facts that the dashboard reads.
 
-## Data Ownership
+The frontend ships with the generated files committed, so this pipeline only
+needs to run when the underlying data or model changes.
 
-Large parquet files in `data/` are hard links to the original research files. They do not duplicate 10GB on disk. If the old `Multidisciplinary CBL/Multidisciplinary-CBL-2026-Group-30` folder is deleted, these backend paths still keep the data as long as the backend hard links remain.
-
-## Commands
-
-Create a cache from already-generated research reports:
-
-```bash
-python3 backend/research_pipeline/pipeline.py --mode from-existing
-```
-
-Run full recomputation from raw parquet/docx/xlsx:
+## Requirements
 
 ```bash
-python3 -m pip install -r backend/research_pipeline/requirements.txt
-python3 backend/research_pipeline/pipeline.py --mode full
+python3 -m pip install -r requirements.txt
 ```
 
-## Current Truth Boundary
+Core libraries: pandas, numpy, scikit-learn, scipy, geopandas, openpyxl,
+python-docx, pyarrow.
 
-`from-existing` mode uses verified existing outputs: `report/optimized_officer_transfers.csv`, audit markdown, `Crime severity scores.docx`, and `Police force in England.xlsx`.
+## Inputs
 
-`full` mode contains the complete computations for:
+| File | Used for |
+| --- | --- |
+| `data/street_from_2021.parquet` | 2021–2025 street crime; CHI forecast features, 2025 crime counts |
+| `data/street_from_2018.parquet` | 2018+ street crime; LSOA→force mapping in the full recompute path |
+| `data/stop_and_search_from_2021.parquet` | stop-and-search hit-rate efficiency multipliers |
+| `data/File_5_IoD2019_Scores.xlsx` | IoD 2019 LSOA deprivation scores |
+| `Crime severity scores.docx` | Cambridge Crime Harm Index category weights |
+| `Police force in England.xlsx` | baseline force headcount and core grant funding |
 
-- CCHI median parsing from Word document
-- LSOA to force mapping from street crime parquet
-- IMD aggregation from IoD 2019 spreadsheet
-- 2025 CHI aggregation from street crime parquet
-- KNN spatial lag feature
-- Random Forest fit and validation
-- Stop-and-search hit-rate computation
-- Hamilton apportionment target allocation
-- Haversine transportation LP via `scipy.optimize.linprog`
-- VIF diagnostics via least-squares auxiliary regressions
+## Regenerating the dashboard data
 
-Not implemented: internal LSOA deployment / Lloyd allocation. No LSOA-level officer placement targets or constraints exist in the research files, so backend exposes this as missing rather than faking it.
+The dashboard consumes four generated artefacts. Run these in order from the
+repository root.
+
+1. **`forecast_and_reallocate_2026.py`** — fits the 2026 Random Forest CHI
+   forecast on the 2021–2025 force-year panel, applies stop-and-search
+   efficiency multipliers and Hamilton apportionment, then solves the
+   Haversine officer-transfer LP. Writes `report/reallocation_targets_2026.csv`
+   and `report/optimized_officer_transfers_2026.csv`.
+
+2. **`build_lsoa_harm_surface.py`** — distributes each force's demand down to
+   LSOA level to produce `report/lsoa_harm_surface.csv`, the demand surface used
+   by the internal-allocation step.
+
+3. **`pipeline.py --mode from-existing`** — assembles the forecast targets and
+   transfer legs into `cache/research_snapshot.json`, the snapshot that feeds
+   `src/data/researchSnapshot.generated.ts`.
+
+4. **`scripts/generate_force_facts.py`** — computes per-force land area and 2025
+   recorded-crime counts, writing `src/data/forceFacts.generated.ts`.
+
+`internal_allocation/` produces the per-force LSOA officer placements and
+animations (see its own README). Its output feeds
+`src/data/lloydAllocation.generated.ts`.
+
+`pipeline.py --mode full` is the legacy single-pass recompute that rebuilds the
+snapshot from the raw parquet/docx/xlsx inputs directly. The `from-existing`
+mode above is the supported path.
+
+## Layout
+
+```
+pipeline.py                    snapshot assembler (from-existing | full)
+forecast_and_reallocate_2026.py  Random Forest forecast + LP reallocation
+build_lsoa_harm_surface.py     per-LSOA demand surface
+crime_severity_scores.py       Crime Harm Index category weights
+force_name_mapping.py          force-name normalisation
+police_force_funding.py        baseline headcount + core grant
+scripts/generate_force_facts.py  per-force area + 2025 crime counts
+internal_allocation/           within-force LSOA officer placement
+data/                          raw inputs (parquet / xlsx)
+report/                        intermediate + final CSV outputs
+cache/research_snapshot.json   assembled API snapshot
+```
+
+## Scope notes
+
+- London is modelled as a single merged force; the City of London is kept
+  separate from the Metropolitan Police.
+- The internal-allocation step runs on the 37 territorial forces with usable
+  LSOA geometry.
+- Greater Manchester has no 2025 street-crime rows in the open police.uk feed
+  (GMP withdrew from it), so its recorded-crime counts are absent by source,
+  not by error.
