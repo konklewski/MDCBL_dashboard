@@ -106,11 +106,8 @@ function LloydPlayer({ force }: { force: Force }) {
           Animation unavailable for this force
         </div>
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          The internal Weighted Lloyd's simulation was produced for 37 English territorial forces.
-          {" "}
-          <span className="text-foreground">{force.name}</span> is excluded because the
-          Metropolitan Police and City of London boundaries could not be merged/shaped cleanly in the
-          source LSOA geometry, so no officer-placement animation or allocation table was generated.
+          No internal Weighted Lloyd's officer-placement animation or allocation table was
+          generated for <span className="text-foreground">{force.name}</span>.
         </p>
       </div>
     );

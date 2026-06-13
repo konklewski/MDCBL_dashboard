@@ -50,8 +50,9 @@ repository root.
    recorded-crime counts, writing `src/data/forceFacts.generated.ts`.
 
 `internal_allocation/` produces the per-force LSOA officer placements and
-animations (see its own README). Its output feeds
-`src/data/lloydAllocation.generated.ts`.
+animations (see its own README), writing `report/sortedLsoaOfficerAllocation.csv`
+and the GIFs in `public/animations/`. `scripts/generate_lloyd_allocation.py` then
+summarises that CSV into `src/data/lloydAllocation.generated.ts` for the Policy tab.
 
 `pipeline.py --mode full` is the legacy single-pass recompute that rebuilds the
 snapshot from the raw parquet/docx/xlsx inputs directly. The `from-existing`
@@ -66,7 +67,8 @@ build_lsoa_harm_surface.py     per-LSOA demand surface
 crime_severity_scores.py       Crime Harm Index category weights
 force_name_mapping.py          force-name normalisation
 police_force_funding.py        baseline headcount + core grant
-scripts/generate_force_facts.py  per-force area + 2025 crime counts
+scripts/generate_force_facts.py      per-force area + 2025 crime counts
+scripts/generate_lloyd_allocation.py LSOA officer-allocation summary
 internal_allocation/           within-force LSOA officer placement
 data/                          raw inputs (parquet / xlsx)
 report/                        intermediate + final CSV outputs
@@ -77,8 +79,8 @@ cache/research_snapshot.json   assembled API snapshot
 
 - London is modelled as a single merged force; the City of London is kept
   separate from the Metropolitan Police.
-- The internal-allocation step runs on the 37 territorial forces with usable
-  LSOA geometry.
+- The internal-allocation step runs on the 39 territorial forces with usable
+  LSOA geometry, including the Metropolitan Police and City of London.
 - Greater Manchester has no 2025 street-crime rows in the open police.uk feed
   (GMP withdrew from it), so its recorded-crime counts are absent by source,
   not by error.

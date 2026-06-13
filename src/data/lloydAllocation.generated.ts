@@ -5,6 +5,7 @@ export const lloydAllocation = {
     "Bedfordshire",
     "Cambridgeshire",
     "Cheshire",
+    "City of London",
     "Cleveland",
     "Cumbria",
     "Derbyshire",
@@ -22,6 +23,7 @@ export const lloydAllocation = {
     "Leicestershire",
     "Lincolnshire",
     "Merseyside",
+    "Metropolitan Police",
     "Norfolk",
     "North Yorkshire",
     "Northamptonshire",
@@ -221,6 +223,52 @@ export const lloydAllocation = {
           "name": "Cheshire East 051D",
           "code": "E01018481",
           "officers": 28
+        }
+      ]
+    },
+    "City of London": {
+      "totalOfficers": 276,
+      "lsoaCount": 10,
+      "topLsoas": [
+        {
+          "name": "City of London 001F",
+          "code": "E01032739",
+          "officers": 124
+        },
+        {
+          "name": "City of London 001E",
+          "code": "E01000005",
+          "officers": 42
+        },
+        {
+          "name": "City of London 001G",
+          "code": "E01032740",
+          "officers": 27
+        },
+        {
+          "name": "City of London 001A",
+          "code": "E01000001",
+          "officers": 26
+        },
+        {
+          "name": "Islington 023D",
+          "code": "E01002704",
+          "officers": 19
+        },
+        {
+          "name": "Hackney 033C",
+          "code": "E01033708",
+          "officers": 19
+        },
+        {
+          "name": "City of London 001B",
+          "code": "E01000002",
+          "officers": 16
+        },
+        {
+          "name": "Camden 028B",
+          "code": "E01000914",
+          "officers": 1
         }
       ]
     },
@@ -1003,6 +1051,52 @@ export const lloydAllocation = {
           "name": "Sefton 037E",
           "code": "E01007010",
           "officers": 28
+        }
+      ]
+    },
+    "Metropolitan Police": {
+      "totalOfficers": 15499,
+      "lsoaCount": 5101,
+      "topLsoas": [
+        {
+          "name": "Hillingdon 031A",
+          "code": "E01002444",
+          "officers": 1122
+        },
+        {
+          "name": "Slough 014D",
+          "code": "E01016482",
+          "officers": 630
+        },
+        {
+          "name": "Hounslow 022A",
+          "code": "E01002555",
+          "officers": 386
+        },
+        {
+          "name": "Spelthorne 002D",
+          "code": "E01030746",
+          "officers": 378
+        },
+        {
+          "name": "Spelthorne 001A",
+          "code": "E01030743",
+          "officers": 373
+        },
+        {
+          "name": "Hillingdon 032C",
+          "code": "E01002449",
+          "officers": 316
+        },
+        {
+          "name": "Hillingdon 031D",
+          "code": "E01002527",
+          "officers": 229
+        },
+        {
+          "name": "Hillingdon 031B",
+          "code": "E01002446",
+          "officers": 216
         }
       ]
     },
