@@ -227,8 +227,8 @@ export const lloydAllocation = {
       ]
     },
     "City of London": {
-      "totalOfficers": 276,
-      "lsoaCount": 10,
+      "totalOfficers": 235,
+      "lsoaCount": 6,
       "topLsoas": [
         {
           "name": "City of London 001F",
@@ -251,24 +251,14 @@ export const lloydAllocation = {
           "officers": 26
         },
         {
-          "name": "Islington 023D",
-          "code": "E01002704",
-          "officers": 19
-        },
-        {
-          "name": "Hackney 033C",
-          "code": "E01033708",
-          "officers": 19
-        },
-        {
           "name": "City of London 001B",
           "code": "E01000002",
           "officers": 16
         },
         {
-          "name": "Camden 028B",
-          "code": "E01000914",
-          "officers": 1
+          "name": "City of London 001C",
+          "code": "E01000003",
+          "officers": 0
         }
       ]
     },

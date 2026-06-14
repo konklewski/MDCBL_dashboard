@@ -58,6 +58,18 @@ function sortCounts(counts: Record<string, number>): Record<string, number> {
   return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
 }
 
+// The LSOA demand surface groups crime by the *reporting* force. police.uk snaps
+// some City of London Police crimes to anonymised map points in neighbouring
+// Metropolitan-borough LSOAs (Tower Hamlets, Hackney, Islington…), inflating its
+// LSOA list to ~278. City of London Police's statutory jurisdiction is the City
+// of London local authority — the "City of London ###" LSOAs — so keep only those.
+function jurisdictionFilter<T extends { name: string }>(forceName: string, rows: T[]): T[] {
+  if (forceName === "City of London") {
+    return rows.filter((row) => row.name.startsWith("City of London"));
+  }
+  return rows;
+}
+
 export const forces: Force[] = researchSnapshot.forces.map((force) => ({
   ...force,
   status: force.status as Force["status"],
@@ -67,14 +79,17 @@ export const forces: Force[] = researchSnapshot.forces.map((force) => ({
   areaSqMi: forceFacts[force.name]?.areaSqMi ?? force.areaSqMi,
   crimeByCategory: sortCounts(forceFacts[force.name]?.crimeByCategory2025 ?? force.crimeByCategory),
   imd: { ...force.imd },
-  topLsoas: force.topLsoas.map((lsoa) => ({
-    name: lsoa.name,
-    code: lsoa.code,
-    latitude: lsoa.latitude,
-    longitude: lsoa.longitude,
-    scores: { ...lsoa.scores },
-  })),
-  lsoaDemandCells: [...(force.lsoaDemandCells ?? [])],
+  topLsoas: jurisdictionFilter(
+    force.name,
+    force.topLsoas.map((lsoa) => ({
+      name: lsoa.name,
+      code: lsoa.code,
+      latitude: lsoa.latitude,
+      longitude: lsoa.longitude,
+      scores: { ...lsoa.scores },
+    })),
+  ),
+  lsoaDemandCells: jurisdictionFilter(force.name, [...(force.lsoaDemandCells ?? [])]),
   missingComputedFields: [...force.missingComputedFields],
 }));
 

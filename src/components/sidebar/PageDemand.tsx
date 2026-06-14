@@ -171,7 +171,7 @@ function LsoaPointLayer({ cells }: { cells: Force["lsoaDemandCells"] }) {
       </div>
       <Legend
         gradient
-        note="Geographic map of this force's 80 highest-demand LSOAs, each dot placed at its real lat/lon. Dot size & colour = spatial demand score (amber low → red high)."
+        note={`Geographic map of this force's ${topCells.length} highest-demand LSOAs, each dot placed at its real lat/lon. Dot size & colour = spatial demand score (amber low → red high).`}
       />
       <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
         <span>Cells {topCells.length}</span>
