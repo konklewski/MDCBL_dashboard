@@ -9,6 +9,8 @@ needs to run when the underlying data or model changes.
 
 ## Requirements
 
+Python 3.10 or newer (developed on 3.13).
+
 ```bash
 python3 -m pip install -r requirements.txt
 ```

@@ -22,9 +22,14 @@ The backend is only needed to regenerate those files.
 | --- | --- |
 | UI | React 19, TanStack Start / Router (SSR), Tailwind CSS v4, Zustand |
 | Maps & charts | Mapbox GL, Recharts |
-| Data pipeline | Python, pandas, scikit-learn, SciPy (`linprog`), geopandas |
+| Data pipeline | Python 3.10+ (developed on 3.13), pandas, scikit-learn, SciPy (`linprog`), geopandas |
 
 ## Running the dashboard
+
+The dashboard runs with either [Bun](https://bun.sh) or Node.js + npm — use
+whichever you have. Node 18 or newer is required for the npm path.
+
+With Bun:
 
 ```bash
 bun install
@@ -33,11 +38,20 @@ bun run build    # production build (client + SSR server) into dist/
 bun run preview  # serve the production build
 ```
 
-The map needs a Mapbox access token. A default token is bundled, but you can
-override it with an environment variable:
+With npm (if Bun is unavailable):
 
 ```bash
-VITE_MAPBOX_TOKEN=pk.your_token_here bun run dev
+npm install
+npm run dev      # start the dev server
+npm run build    # production build (client + SSR server) into dist/
+npm run preview  # serve the production build
+```
+
+The map needs a Mapbox access token. A default token is bundled, but you can
+override it with an environment variable (prefix the command you actually run):
+
+```bash
+VITE_MAPBOX_TOKEN=pk.your_token_here bun run dev   # or: npm run dev
 ```
 
 ## Project layout
