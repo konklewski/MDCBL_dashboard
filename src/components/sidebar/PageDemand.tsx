@@ -88,7 +88,7 @@ export function PageDemand({ force }: { force: Force }) {
                 <RadarChart data={radarData} outerRadius="68%">
                   <PolarGrid stroke="#3f3f46" />
                   <PolarAngleAxis dataKey="domain" tick={{ fill: "#a1a1aa", fontSize: 10 }} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={{ fill: "#52525b", fontSize: 9 }} stroke="#3f3f46" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: "#52525b", fontSize: 9 }} stroke="#3f3f46" />
                   <Radar name="National avg" dataKey="National" stroke="#a1a1aa" fill="#a1a1aa" fillOpacity={0.12} />
                   <Radar name="This force" dataKey="Force" stroke="#22d3ee" fill="#22d3ee" fillOpacity={0.35} />
                   <Tooltip content={<RadarTip />} />
