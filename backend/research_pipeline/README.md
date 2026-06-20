@@ -29,6 +29,12 @@ python-docx, pyarrow.
 | `Crime severity scores.docx` | Cambridge Crime Harm Index category weights |
 | `Police force in England.xlsx` | baseline force headcount and core grant funding |
 
+These raw inputs are public and free but not committed (they are git-ignored for
+size). See **`DATA_MANIFEST.md` → "Obtaining the raw inputs"** for the exact
+sources (data.police.uk, gov.uk IoD2019, ONS Crime Severity Score, Home Office
+workforce/funding) and download steps. You only need them for the `full`
+recompute; the committed `report/*.csv` and `cache/` reproduce everything else.
+
 ## Regenerating the dashboard data
 
 The dashboard consumes four generated artefacts. Run these in order from the

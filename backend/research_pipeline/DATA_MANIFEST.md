@@ -13,6 +13,27 @@ What lives in this backend and what each artefact is for.
   the full recompute path.
 - `data/stop_and_search_from_2021.parquet` — stop-and-search hit-rate inputs.
 
+## Obtaining the raw inputs
+
+The large raw inputs are **not committed** (they are git-ignored — see the root
+`.gitignore`: `*.parquet`, `*.xlsx` under `data/`). They are public and free to
+download. The pipeline's committed `report/*.csv` and `cache/research_snapshot.json`
+let you reproduce the snapshot and the dashboard **without** re-downloading these;
+you only need them for the `full` recompute path. To collect them from scratch:
+
+| Input | Source | How |
+| --- | --- | --- |
+| `data/street_from_2021.parquet`, `data/street_from_2018.parquet` | Police recorded street-level crime, data.police.uk | Custom download at <https://data.police.uk/data/> — select all forces and the date range (Jan 2018 / Jan 2021 to latest), download the "street" CSVs, concatenate and save as Parquet (`pandas.read_csv(...).to_parquet(...)`). Open Government Licence v3.0. |
+| `data/stop_and_search_from_2021.parquet` | Police stop-and-search, data.police.uk | Same custom download, tick "stop and search"; concatenate the stop-and-search CSVs to Parquet. |
+| `data/File_5_IoD2019_Scores.xlsx` | English Indices of Deprivation 2019, MHCLG (gov.uk) | <https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019> — "File 5: scores for the indices of deprivation". |
+| `Crime severity scores.docx` | ONS Crime Severity Score weights (England & Wales) | <https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/crimeseverityscoredatatool> — per-offence severity weights used as the Crime Harm Index. |
+| `Police force in England.xlsx` | Home Office — Police workforce + police funding settlement | Headcount: <https://www.gov.uk/government/collections/police-workforce-england-and-wales>. Core grant: <https://www.gov.uk/government/collections/police-funding> (2025–26 final settlement). |
+
+Column names the code expects: street files — `lsoa_code`, `reported_by`,
+`latitude`, `longitude`, `month`, `crime_type`; stop-and-search — `latitude`,
+`longitude`, `outcome`, `outcome_linked_to_object_of_search`. Keep the file names
+above so the paths in `pipeline.py` resolve unchanged.
+
 ## Outputs (`report/`)
 
 - `reallocation_targets_2026.csv` — per-force 2026 forecast CHI, hit rate,
