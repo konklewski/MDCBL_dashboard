@@ -36,6 +36,11 @@ export default defineConfig(({ mode }) => {
         },
         // Use src/server.ts as the SSR server entry (our error-wrapping handler).
         server: { entry: "server" },
+        // Static SPA build: all dashboard data is bundled client-side
+        // (src/data/*.generated.ts) and Mapbox renders client-side, so no
+        // SSR/serverless runtime is needed. Prerenders the index shell to
+        // dist/client so any host (Vercel static) can serve it.
+        spa: { enabled: true },
       }),
       viteReact(),
     ],
